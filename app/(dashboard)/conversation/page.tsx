@@ -237,7 +237,7 @@ const ConversationPage = () => {
                             <p className="text-sm">
                                 {message.content}
                             </p>
-                            {message.role === 'assistant' && <button onClick={() => copyToClipboard(message.content)}><Copy /></button>}
+                            {message.role === 'assistant' && <button onClick={() => copyToClipboard(message.content || '')}><Copy /></button>}
                         </div>
                     ))}
 
