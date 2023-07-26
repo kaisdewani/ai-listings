@@ -68,7 +68,7 @@ const Sidebar = () => {
                         />
                     </div>
                     <h1 className={cn("text-2xl font-bold", montserrat.className)}>
-                        Listings
+                        Real Estate AiO
                     </h1>
                 </Link>
                 <div className="space-y-1">
