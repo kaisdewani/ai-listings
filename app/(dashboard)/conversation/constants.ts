@@ -1,8 +1,9 @@
 import * as z from "zod";
 
 
-export const formSchema = z.object ({
-    prompt: z.string().min(1, {
-        message: "Prompt is required",
-    })
-})
+export const formSchema = z.object({
+    address: z.string().min(1, {
+      message: "Address is required",
+    }),
+    keywords: z.string().optional()
+  });
