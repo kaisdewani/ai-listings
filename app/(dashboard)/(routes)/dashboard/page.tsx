@@ -2,19 +2,19 @@
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ArrowRight, CodeIcon, ImageIcon, MessageSquare, MusicIcon, SettingsIcon, VideoIcon } from "lucide-react";
+import { ArrowRight, BedDoubleIcon, CodeIcon, HomeIcon, ImageIcon, MessageSquare, MusicIcon, SettingsIcon, VideoIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const tools = [
 {
-    label: "Conversation",
-    icon: MessageSquare,
+    label: "Listings",
+    icon: HomeIcon,
     href: "/conversation",
     color: "text-violet-500",
 },
 {
     label: "Image Generation",
-    icon: ImageIcon,
+    icon: BedDoubleIcon,
     href: "/image",
     color: "text-pink-700",
 },

@@ -111,8 +111,8 @@ const ConversationPage = () => {
     return (
         <div>
             <Heading
-                title="Conversation"
-                description="Unleashing the Future of Home Sales with Ai"
+                title="Generate Listings"
+                description="Create a listing with Ai"
                 icon={MessagesSquare}
                 iconColor="text-violet-500"
                 bgColor="bg-violet-500/10"
