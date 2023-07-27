@@ -82,7 +82,7 @@ const ConversationPage = () => {
         try {
             const systemMessage: ChatCompletionRequestMessage = {
                 role: "system",
-                content: `You are an AI model trained to generate real estate listings. Your capabilities include creating concise and engaging descriptions of properties with a maximum length of 250 words. You rely solely on the data provided for a specific home address to generate these listings. ${values.keywords} Your goal is to provide potential buyers with a clear and appealing overview of the property, emphasizing its key features and attributes based on the available data and user-specified keywords. Only respond to questions related to real estate. If its not related, answer eactly with "Please add the full address". (250 word limit)`
+                content: `Generate property descriptions which are unique and personable using the following provided address: ${values.address}. Your capabilities include creating concise and engaging descriptions of properties with a maximum length of 250 words. You rely solely on the data provided for a specific home address to generate these listings. Your goal is to provide potential buyers with a clear and appealing overview of the property, emphasizing its key features and attributes based on the available data and user-specified keywords: ${values.keywords}. Only respond to questions related to real estate. If its not related answer eactly with "Please add the full address".(250 word limit)`
             };
             const userMessage1: ChatCompletionRequestMessage = {
                 role: "user",
@@ -92,13 +92,13 @@ const ConversationPage = () => {
                 role: "user",
                 content: values.keywords || ""  // set to an empty string if keywords is null or undefined
             };
-            const newMessages = [...messages, systemMessage, userMessage1, userMessage2];
+            const newMessages = [...messages, systemMessage];
 
             const response = await axios.post("/api/conversation", {
                 messages: newMessages,
             });
 
-            setMessages((current) => [...current, userMessage1, userMessage2, response.data]);
+            setMessages((current) => [...current, response.data]);
 
             form.reset();
         } catch (error: any) {
