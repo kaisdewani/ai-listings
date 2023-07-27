@@ -29,24 +29,24 @@ const routes = [
         href: "/image",
         color: "text-pink-700",
     },
-    {
-        label: "Video Generation",
-        icon: VideoIcon,
-        href: "/video",
-        color: "text-orange-700",
-    },
-    {
-        label: "Music",
-        icon: MusicIcon,
-        href: "/music",
-        color: "text-emerald-500",
-    },
-    {
-        label: "Code Generation",
-        icon: CodeIcon,
-        href: "/code",
-        color: "text-green-500",
-    },
+    // {
+    //     label: "Video Generation",
+    //     icon: VideoIcon,
+    //     href: "/video",
+    //     color: "text-orange-700",
+    // },
+    // {
+    //     label: "Music",
+    //     icon: MusicIcon,
+    //     href: "/music",
+    //     color: "text-emerald-500",
+    // },
+    // {
+    //     label: "Code Generation",
+    //     icon: CodeIcon,
+    //     href: "/code",
+    //     color: "text-green-500",
+    // },
     {
         label: "Settings",
         icon: SettingsIcon,
