@@ -1,165 +1,87 @@
-"use client"
+"use client";
 
 import * as z from "zod";
 import { Heading } from "@/components/heading";
-import { BedDoubleIcon, MessagesSquare, MessagesSquareIcon } from "lucide-react";
+import { BedDoubleIcon, Download } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { formSchema } from "./constants";
-import { zodResolver } from "@hookform/resolvers/zod"
+import { amountOptions, formSchema, resolutonOptions } from "./constants";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ChatCompletionRequestMessage } from "openai";
-import axios from "axios"
+import axios from "axios";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
 import { cn } from "@/lib/utils";
-import { UserAvatar } from "@/components/user-avatar";
-import { BotAvatar } from "@/components/bot-avatar";
-import { Copy } from 'lucide-react';
-
-
+import { Copy } from "lucide-react";
+import { Select, SelectItem, SelectValue } from "@/components/ui/select";
+import { SelectTrigger } from "@/components/ui/select";
+import { SelectContent } from "@/components/ui/select";
+import { Card, CardFooter } from "@/components/ui/card";
+import Image from "next/image";
 
 const ImagePage = () => {
-    const router = useRouter()
-    const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const router = useRouter();
+  const [images, setImages] = useState<string[]>([]);
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            address: "",
-            keywords: ""
-        }
-    });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      prompt: "",
+      amount: "1",
+      resolution: "512x512",
+    },
+  });
 
-    const isLoading = form.formState.isSubmitting
+  const isLoading = form.formState.isSubmitting;
 
-    // const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    //     try {
-    //         const userMessage: ChatCompletionRequestMessage = {
-    //             role: "user",
-    //             content: values.prompt
-    //         }
-    //         const newMessages = [...messages, userMessage]
+  const [copySuccess, setCopySuccess] = useState("");
 
-    //         const response = await axios.post("/api/conversation", {
-    //             messages: newMessages,
-    //         })
-
-    //         setMessages((current) => [...current, userMessage, response.data])
-
-    //         form.reset();
-
-
-    //     } catch (error: any) {
-    //         //Pro Model here
-    //         console.log(error)
-    //     } finally {
-    //         router.refresh();
-    //     }
-    // }
-
-    const [copySuccess, setCopySuccess] = useState('');
-
-    const copyToClipboard = async (text: string) => {
-        try {
-            await navigator.clipboard.writeText(text);
-            alert('Copied!');
-        } catch (err) {
-            alert('Failed to copy text');
-        }
-    };
-
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        // Check if address is empty
-        if (!values.address || values.address.length === 0) {
-            alert("Address is a required field");
-            return;
-        }
-
-        try {
-            const systemMessage: ChatCompletionRequestMessage = {
-                role: "system",
-                content: `Generate property descriptions which are unique and personable using the following provided address: ${values.address}. Your capabilities include creating concise and engaging descriptions of properties with a maximum length of 250 words. You rely solely on the data provided for a specific home address to generate these listings. Your goal is to provide potential buyers with a clear and appealing overview of the property, emphasizing its key features and attributes based on the available data and user-specified keywords: ${values.keywords}. Only respond to questions related to real estate. If its not related answer eactly with "Please add the full address".(250 word limit)`
-            };
-            const userMessage1: ChatCompletionRequestMessage = {
-                role: "user",
-                content: values.address
-            };
-            const userMessage2: ChatCompletionRequestMessage = {
-                role: "user",
-                content: values.keywords || ""  // set to an empty string if keywords is null or undefined
-            };
-            const newMessages = [...messages, systemMessage];
-
-            const response = await axios.post("/api/conversation", {
-                messages: newMessages,
-            });
-
-            setMessages((current) => [...current, response.data]);
-
-            form.reset();
-        } catch (error: any) {
-            console.log(error)
-        } finally {
-            router.refresh();
-        }
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert("Copied!");
+    } catch (err) {
+      alert("Failed to copy text");
     }
+  };
 
-    return (
-        <div>
-            <Heading
-                title="Stage Your Room"
-                description="Try staging with Ai"
-                icon={BedDoubleIcon}
-                iconColor="text-pink-700"
-                bgColor="text-pink-700/10"
-            />
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      setImages([]);
+      const response = await axios.post("/api/image", values);
 
-            <div className="px-4 lg:px-8">
+      const urls = response.data.map((image: { url: string }) => image.url);
 
-                {/* <Form {...form}>
+      setImages(urls);
 
-                    <form onSubmit={form.handleSubmit(onSubmit)}
-                        className="
-                            rounded-lg
-                            border
-                            w-full
-                            p-4
-                            px-3
-                            md:px-6
-                            foucs-within:shadow-sm
-                            grid
-                            grid-cols-12
-                            gap-2
-                        "
-                    >
-                        <FormField
-                            name="prompt"
-                            render={({ field }) => (
-                                <FormItem className="col-span-12 lg:col-span-10">
-                                    <FormControl className="m-0 p-0">
-                                        <Input
-                                            className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                                            disabled={isLoading}
-                                            placeholder="How do I calculate the radius of a circle?"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
-                        <Button className="col-span-12 lg:col-span-2 w-full" type="submit" disabled={isLoading} size="icon">
-                            Generate
-                        </Button>
-                    </form>
-                </Form> */}
+      form.reset();
 
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}
-                        className="
+      console.log(values);
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      router.refresh();
+    }
+  };
+
+  return (
+    <div>
+      <Heading
+        title="Stage Your Room"
+        description="Try staging with Ai"
+        icon={BedDoubleIcon}
+        iconColor="text-pink-700"
+        bgColor="text-pink-700/10"
+      />
+
+      <div className="px-4 lg:px-8">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="
             rounded-lg
             border
             w-full
@@ -171,66 +93,117 @@ const ImagePage = () => {
             grid-cols-12
             gap-2
         "
+          >
+            <div className="col-span-12 lg:col-span-10 p-4 rounded-lg border w-full">
+              <FormField
+                name="prompt"
+                render={({ field }) => (
+                  <FormControl className="m-0 p-0">
+                    <Input
+                      className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+                      disabled={isLoading}
+                      placeholder="Modern furniture in a living room"
+                      {...field}
+                    />
+                  </FormControl>
+                )}
+              />
+              <FormField
+                name="amount"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-12 lg:col-span-6">
+                    <Select
+                      disabled={isLoading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
                     >
-                        <div className="col-span-12 lg:col-span-10 p-4 rounded-lg border w-full">
-                            <FormField
-                                name="address"
-                                render={({ field }) => (
-                                    <FormControl className="m-0 p-0">
-                                        <Input
-                                            className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                                            disabled={isLoading}
-                                            placeholder="Listing Address"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                )}
-                            />
-                        </div>
-
-
-
-                        <Button className="col-span-12 lg:col-span-2 w-full mt-4" disabled={isLoading} type="submit">
-                            Generate
-                        </Button>
-                    </form>
-                </Form>
-
-            </div>
-            <div className="space-y-4 mt-4">
-
-                {isLoading && (
-                    <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted">
-                        <Loader />
-                    </div>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue defaultValue={field.value} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {amountOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
                 )}
+              />
 
-                {messages.length === 0 && !isLoading && (
-                    <div>
-                        <Empty label="No conversation started" />
-                    </div>
+              <FormField
+                name="resolution"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="col-span-12 lg:col-span-6">
+                    <Select
+                      disabled={isLoading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue defaultValue={field.value} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {resolutonOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
                 )}
-                <div className="flex flex-col-reverse gap-y-4">
-                    {messages.filter(message => message.role !== "system").map((message) => (
-                        <div
-                            key={message.content}
-                            className={cn("p-8 w-full flex items-start gap-x-8 rounded-lg",
-                                message.role == "user" ? "bg-white border border-black/10" : "bg-muted"
-                            )}
-                        >
-                            {/* {message.role === "user" ? <UserAvatar /> : <BotAvatar />} */}
-                            {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                            <p className="text-sm">
-                                {message.content}
-                            </p>
-                            {message.role === 'assistant' && <button onClick={() => copyToClipboard(message.content || '')}><Copy /></button>}
-                        </div>
-                    ))}
-
-                </div>
+              />
             </div>
+            <Button
+              className="col-span-12 lg:col-span-2 w-full mt-4"
+              disabled={isLoading}
+              type="submit"
+            >
+              Generate
+            </Button>
+          </form>
+        </Form>
+      </div>
+      <div className="space-y-4 mt-4">
+        {isLoading && (
+          <div className="p-20">
+            <Loader />
+          </div>
+        )}
+
+        {images.length === 0 && !isLoading && (
+          <div>
+            <Empty label="No images" />
+          </div>
+        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
+          {images.map((src) => (
+            <Card key={src} className="rounded-lg overflow-hidden">
+              <div className="relative aspect-square">
+                <Image alt="Image" fill src={src} />
+              </div>
+              <CardFooter className="p-2">
+                <Button variant="secondary" className="w-full" onClick={()=> window.open(src)}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
-    );
-}
+      </div>
+    </div>
+  );
+};
 
 export default ImagePage;
