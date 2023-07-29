@@ -1,13 +1,10 @@
+import { FileType } from "lucide-react";
 import * as z from "zod";
 
 
 export const formSchema = z.object({
-    prompt: z.string().min(1, {
-      message: "Image is required",
-    }),
-    amount: z.string().min(1),
-    resolution: z.string().min(1)
-  });
+  prompt: z.string().nonempty()
+});
 
 
   export const amountOptions = [
