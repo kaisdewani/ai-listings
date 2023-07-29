@@ -5,14 +5,14 @@ export const Loader = () => {
     return (
         <div className="h-full flex flex-col gap-y-4 items-center justify-center">
             <div className="w-10 h-10 relative animate-spin">
-                <Image 
+                <Image
                     alt="logo"
-                    fill 
+                    fill
                     src="/logo.png"
                 />
             </div>
             <p className="text-sm text-muted-foreground">
-                We are working on your listing please wait ...
+                We are working on your request please wait ...
             </p>
         </div>
     )

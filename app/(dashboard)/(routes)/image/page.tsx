@@ -146,7 +146,7 @@ const ImagePage = () => {
       )}
       {imageUrl && (
         <div className="mt-4">
-          <img className="p-8" src={imageUrl} alt="Generated output" />
+          <img className="p-8 rounded-lg" src={imageUrl} alt="Generated output" />
         </div>
       )}
     </div>
