@@ -6,12 +6,13 @@ import { Loader } from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import axios from "axios";
-import { Copy } from "lucide-react";
+import { Copy, MessagesSquare } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema } from "./constants";
+import { Heading } from "@/components/heading";
 
 const ImagePage = () => {
   const [images, setImages] = useState<string>();
@@ -88,7 +89,17 @@ const ImagePage = () => {
 
 
   return (
+
     <div>
+      <div>
+        <Heading
+          title="Inspiration"
+          description="Upload a photo to get some inspiration"
+          icon={MessagesSquare}
+          iconColor="text-violet-500"
+          bgColor="bg-violet-500/10"
+        />
+      </div>
       {/* ... */}
       <div className="px-4 lg:px-8">
         <form
@@ -135,7 +146,7 @@ const ImagePage = () => {
       )}
       {imageUrl && (
         <div className="mt-4">
-          <img src={imageUrl} alt="Generated output" />
+          <img className="p-8" src={imageUrl} alt="Generated output" />
         </div>
       )}
     </div>
