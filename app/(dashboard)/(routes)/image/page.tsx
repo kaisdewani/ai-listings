@@ -146,7 +146,8 @@ const ImagePage = () => {
       )}
       {imageUrl && (
         <div className="mt-4">
-          <img className="p-8 rounded-lg" src={imageUrl} alt="Generated output" />
+          <img src={imageUrl} alt="Generated output" />
+          {imageUrl && <button className="flex justify-end" onClick={() => copyToClipboard(imageUrl || '')}><Copy /></button>}
         </div>
       )}
     </div>
